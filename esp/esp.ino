@@ -114,9 +114,13 @@ void setup() {
 
   Serial.println(WiFi.gatewayIP());
 
+  Serial.print('}');
+
 }
 
  void loop() {
+
+  
 
   if(Serial.available())
 

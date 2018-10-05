@@ -5,6 +5,7 @@
 void send_data();
 
 
+char a;
 
 const char* ssid     = "harkabahadur";
 
@@ -119,44 +120,50 @@ void setup() {
 
 }
 
- void loop() {
-
-  
-
-  if(Serial.available())
-
-    {
-
-      char b;
-      b =Serial.read();
-
-      Serial.print(b);
-
-      Serial.print(" ");
-
-
-      if (b=='[')
-
-      {
-              sensor_value=uart0_getint();
-
-                Serial.print(sensor_value);
-                 Serial.print(" ");
-              send_data();
-      }
-
-
-
-    }
-
-
-
+void waitandsendchar(char waiting_char, char sending_char)
+{
+  Serial.flush();
+    a='1';
+         do
+         {
+                  Serial.print(waiting_char);
+                  if (Serial.available())
+                  a=Serial.read();
+         }
+            while(a!=sending_char);
+   Serial.flush();
 }
 
 
+void waitandsendstring(char start,int waiting_char, char sending_char)
+{
+  Serial.flush();
+    a='1';
+         do
+         {
+                  Serial.print(start);
+                  Serial.print(waiting_char);
+                  Serial.print(" ");
+                  if (Serial.available())         
+                  a=Serial.read();
+         }
+            while(a!=sending_char);
+   Serial.flush();
+}
+
+ void loop() {
+
+    waitandsendchar('[','$');
+    sensor_value= uart0_getint();
+      for (int i=1;i<=100;i++)
+             Serial.print("$");   
+        send_data();
+    waitandsendchar('=','=');
+    waitandsendstring('$',on_value,'$');
+    }
+
 
 void send_data()
-
 {
 
   WiFiClient client;
@@ -170,70 +177,19 @@ void send_data()
     return;
 
   }
-
-    Serial.print('=');
-
-
-
-  // We now create a URI for the request
-
  String url = "/reply/?sensor_value=" + String(sensor_value);
-
- //String url =  "/127.0.0.1/new.php?x=22";
-
- //localhost/send_data.php?id=1&num=10
-
-//  Serial.print("Requesting URL: ");
-
-//  Serial.println(url);
-
-   // This will send the request to the server
-
   client.print(String("GET ") + url + " HTTP/1.1\r\n" +
 
                "Host: " + host + "\r\n" +
 
                "Connection: close\r\n\r\n");
-
-
-
   delay(100);
 
   int flag=0;
-
-  // Read all the lines of the reply from server and print them to Serial
-
+  
   while(!client.available()) {}
 
   while(client.available()){
-
-  //  if (flag==0)
-
-   // {
-
-    //  Serial.println("Flag still 0");
-
-   //   String line = client.readStringUntil('\r');
-
-      //Serial.println(line);
-
-    //  if(line=="The data is ")
-
-     // {
-
-            //    Serial.print("Now flag is 1");
-
-       //             flag=1;
-
-
-
-    //  }
-
-   // }
-
-   // if(flag==1)
-
-     // {
 
            char x;
                do
@@ -243,35 +199,5 @@ void send_data()
 
                while (x!='$');
          String on_value = client.readStringUntil('#');
-              // Serial.println(on_value);
-
-
-       //  Serial.println("The total number of data are ");
-
-         Serial.print(on_value);
-
-         Serial.print(' ');
-
-
-
-                  //       Serial.print("Now flag is 2");
-
-
-
-
-
-     // }
-
-
-
-
-
-
-
      }
-
-     Serial.println();
-
-     Serial.println("closing connection");
-
   }

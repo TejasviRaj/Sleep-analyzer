@@ -1,7 +1,8 @@
-int vibration_sensor = A0;
-int sensor_value;
+int vibration_sensor = 2;
+int sensor_value=0;
 int on_value;
 char a;
+char temp[100]="";
 
 
 void uart0_gets(char s[])
@@ -58,9 +59,42 @@ void uart0_gets(char s[])
 
   }
 
+
+
+void waitandsendchar(char waiting_char, char sending_char)
+{
+  Serial.flush();
+    a='1';
+         do
+         {
+                  Serial.print(waiting_char);
+                  if (Serial.available())
+                  a=Serial.read();
+         }
+            while(a!=sending_char);
+   Serial.flush();
+}
+
+
+void waitandsendstring(char start,int waiting_char, char sending_char)
+{
+  Serial.flush();
+    a='1';
+         do
+         {
+                  Serial.print(start);
+                  Serial.print(waiting_char);
+                  Serial.print(" ");
+                  if (Serial.available())         
+                  a=Serial.read();
+         }
+            while(a!=sending_char);
+   Serial.flush();
+}
+
 void setup() {
   Serial.begin(9600);
- // pinMode(vibration_sensor, INPUT);
+  pinMode(vibration_sensor, INPUT);
     pinMode(13, OUTPUT);
 
 
@@ -75,42 +109,24 @@ void setup() {
 }
 
 void loop() {
-    int return_value;
+         //sensor_value= digitalRead()
+       // sensor_value =Serial.digitalRead(vibration_sensor);
+ 
+            waitandsendchar('[','[');
+            waitandsendstring('$',sensor_value,'$');
+            a='1';
+            do
+            {
+              if (Serial.available())         
+                  a=Serial.read();
+            }
+            while(a!='=');
 
-        Serial.flush();
+             waitandsendchar('=','$');
+             on_value=uart0_getint();
 
-          sensor_value = analogRead(vibration_sensor);
-
-
-        Serial.write("[ ");
-         a=Serial.read();
-
-      if (a=='[')
-    {
-          Serial.print(sensor_value);
-          Serial.print(" ");
-          digitalWrite(13,sensor_value);
-          
-          return_value=uart0_getint();
-          if (return_value==sensor_value)
-              {
-                 while (!Serial.available());
-
-                 do
-                 {
-                   a=Serial.read();
-                 }
-                   while (a!='=');
-
-                   on_value=uart0_getint();
-
-
-              }
-
- }
-
-  delay(100);        // delay in between reads for stability
-
-
-
+             for (int i=1;i<=100;i++)
+             Serial.print("$");
+             
+              delay(100);        // delay in between reads for stability
 }

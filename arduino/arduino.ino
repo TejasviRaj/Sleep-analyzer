@@ -124,6 +124,69 @@ for (int i=0;i<num_of_food;i++)
 }
 
 
+
+
+void uart0_gets(char s[])
+
+  {
+
+    char return_char[100];
+
+    int index=0;
+
+      do
+
+      {
+
+        while (!Serial.available()) {}
+
+        return_char[index]=Serial.read();
+
+        index++;
+
+      }
+
+          while(return_char[index-1] != ' ');
+
+      return_char[index-1]='\0';
+
+      strcpy(s,return_char);    
+
+  }
+
+  
+
+  int uart0_getint()
+
+  {
+
+    char d[5];
+
+    uart0_gets(d);
+
+    
+
+    int ans=0;
+
+    for (unsigned int i=0;i<strlen(d);i++)
+
+    {
+
+      ans=ans*10+(d[i]-'0');
+
+    }
+
+    return ans;
+
+  }
+
+ 
+void get_info()
+
+{
+
+
+}
 // the setup routine runs once when you press reset:
 void setup() {
   Serial.begin(9600);
@@ -140,8 +203,34 @@ void setup() {
 }
 
 void loop() {
-  sensor_value = digitalRead(vibration_sensor);
-  Serial.println(sensor_value);
+
+        Serial.flush();
+
+        Serial.write("[ ");
+         a=Serial.read();
+
+      if (a=='[')
+    {
+          Serial.print(sensor_value);
+          Serial.print(" ");
+          return_value=uart0_getint();
+          if (return_value==sensor_value)
+              {
+                 while (!Serial.available());
+
+                 do 
+                 {
+                   a=Serial.read();
+                 }
+                   while (a!='=');
+
+                   on_value=uart0_getint();
+
+
+              }
+
+ }
+
   delay(100);        // delay in between reads for stability
 
    

@@ -10,7 +10,7 @@ const char* ssid     = "harkabahadur";
 
 const char* password = "bodhinamaskar";
 
-const char* host = "192.168.3.5";
+const char* host = "192.168.43.4";
 
 int sensor_value;
 
@@ -113,6 +113,7 @@ void setup() {
   Serial.print("Gateway: ");
 
   Serial.println(WiFi.gatewayIP());
+  Serial.flush();
 
   Serial.print('}');
 
@@ -176,7 +177,7 @@ void send_data()
 
   // We now create a URI for the request
 
- String url = "/sleep/send_data?sensor_value=" + String(sensor_value);
+ String url = "/reply/?sensor_value=" + String(sensor_value);
 
  //String url =  "/127.0.0.1/new.php?x=22";
 
@@ -206,35 +207,44 @@ void send_data()
 
   while(client.available()){
 
-    if (flag==0)
+  //  if (flag==0)
 
-    {
+   // {
 
     //  Serial.println("Flag still 0");
 
-      String line = client.readStringUntil('\r');
+   //   String line = client.readStringUntil('\r');
 
-    //  Serial.println(line);
+      //Serial.println(line);
 
-      if(line=="The data are")
+    //  if(line=="The data is ")
 
-      {
+     // {
 
             //    Serial.print("Now flag is 1");
 
-                    flag=1;
+       //             flag=1;
 
 
 
-      }
+    //  }
 
-    }
+   // }
 
-    if(flag==1)
+   // if(flag==1)
 
-      {
+     // {
 
-         String on_value = client.readStringUntil('\r');
+           char x;
+               do
+               {
+                 x= client.read();
+               }
+
+               while (x!='$');
+         String on_value = client.readStringUntil('#');
+              // Serial.println(on_value);
+
 
        //  Serial.println("The total number of data are ");
 
@@ -250,7 +260,7 @@ void send_data()
 
 
 
-      }
+     // }
 
 
 

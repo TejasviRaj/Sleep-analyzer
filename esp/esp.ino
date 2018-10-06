@@ -152,7 +152,8 @@ void waitandsendstring(char start,int waiting_char, char sending_char)
 }
 
  void loop() {
-  a='1';
+
+     a='1';
       do
       {
           if (Serial.available())

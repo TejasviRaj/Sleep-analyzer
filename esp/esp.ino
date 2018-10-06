@@ -15,7 +15,7 @@ const char* host = "192.168.43.4";
 
 int sensor_value;
 
-int on_value;
+String on_value;
 
 void uart0_gets(char s[])
 
@@ -135,7 +135,7 @@ void waitandsendchar(char waiting_char, char sending_char)
 }
 
 
-void waitandsendstring(char start,int waiting_char, char sending_char)
+void waitandsendstring(char start,String waiting_char, char sending_char)
 {
   Serial.flush();
     a='1';
@@ -206,6 +206,8 @@ void send_data()
                }
 
                while (x!='$');
-         String on_value = client.readStringUntil('#');
-     }
+         on_value = client.readStringUntil('#');
+
+
   }
+}

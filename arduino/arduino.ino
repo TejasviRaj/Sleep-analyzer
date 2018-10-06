@@ -1,4 +1,16 @@
-int vibration_sensor = 2;
+
+#include "pitches.h"
+
+// notes in the melody:
+int melody[] = {
+  NOTE_C4, NOTE_G3, NOTE_G3, NOTE_A3, NOTE_G3, 0, NOTE_B3, NOTE_C4
+};
+
+// note durations: 4 = quarter note, 8 = eighth note, etc.:
+int noteDurations[] = {
+  4, 8, 8, 4, 4, 4, 4, 4
+};
+
 int sensor_value=0;
 int on_value;
 char a;
@@ -94,7 +106,7 @@ void waitandsendstring(char start,int waiting_char, char sending_char)
 
 void setup() {
   Serial.begin(9600);
-  pinMode(vibration_sensor, INPUT);
+//  pinMode(vibration_sensor, INPUT);
     pinMode(13, OUTPUT);
 
 
@@ -109,8 +121,7 @@ void setup() {
 }
 
 void loop() {
-         //sensor_value= digitalRead()
-       // sensor_value =Serial.digitalRead(vibration_sensor);
+        sensor_value =analogRead(A1);
  
             waitandsendchar('[','[');
             waitandsendstring('$',sensor_value,'$');
